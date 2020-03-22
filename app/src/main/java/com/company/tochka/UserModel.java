@@ -18,6 +18,10 @@ public class UserModel {
     @SerializedName("score")
     private Integer score;
 
+    public UserModel(){
+
+    }
+
     public UserModel (String login, String avatarURL, Integer id, Integer score){
         this.login = login;
         this.avatarURL = avatarURL;
