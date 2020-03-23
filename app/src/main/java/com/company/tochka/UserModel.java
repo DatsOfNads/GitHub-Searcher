@@ -15,8 +15,8 @@ public class UserModel {
     @SerializedName("id")
     private Integer id;
 
-    @SerializedName("score")
-    private Integer score;
+    @SerializedName("type")
+    private String type;
 
     public UserModel(){
 
@@ -26,7 +26,6 @@ public class UserModel {
         this.login = login;
         this.avatarURL = avatarURL;
         this.id = id;
-        this.score = score;
     }
 
     public String getLogin() {
@@ -53,12 +52,12 @@ public class UserModel {
         this.id = id;
     }
 
-    public Integer getScore() {
-        return score;
+    public String getType() {
+        return type;
     }
 
-    public void setScore(Integer score) {
-        this.score = score;
+    public void setType(String type) {
+        this.type = type;
     }
 
     @NonNull

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -230,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         SearchView searchView = (SearchView) searchItem.getActionView();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String query) {
 
@@ -252,21 +254,17 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             }
         });
 
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
+        searchView.setOnCloseListener(() -> {
 
-                if(isSearch){
-                    isSearch = false;
-                    isLastPage = false;
-                    adapter.removeAll();
-                    loadFirstPage();
-                }
-
-                return false;
+            if(isSearch){
+                isSearch = false;
+                isLastPage = false;
+                adapter.removeAll();
+                loadFirstPage();
             }
-        });
 
+            return false;
+        });
 
         return super.onCreateOptionsMenu(menu);
     }

@@ -73,16 +73,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 UserModel currentUser = arrayList.get(position);
 
                 String stringLogin = currentUser.getLogin();
-                String stringScore = "Рейтинг - " + currentUser.getScore();//todo стринги
-                String stringId = "id: " + currentUser.getId();
+                String stringId = "id: " + currentUser.getId(); //todo стринги
+                String stringType = "type: " + currentUser.getType();
 
 
                 String stringItemPosition = Integer.toString(position + 1);
 
                 itemViewHolder.textViewUserName.setText(stringLogin);
-                itemViewHolder.textViewUserScore.setText(stringScore);
                 itemViewHolder.textViewId.setText(stringId);
                 itemViewHolder.textViewItemPosition.setText(stringItemPosition);
+                itemViewHolder.textViewType.setText(stringType);
 
                 Picasso.get().load(currentUser.getAvatarURL()).into(itemViewHolder.imageView);
 
@@ -151,8 +151,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class ItemViewHolder extends RecyclerView.ViewHolder{
 
-        TextView textViewUserName, textViewUserScore,
-                textViewId, textViewItemPosition;
+        TextView textViewUserName,
+                textViewId, textViewItemPosition, textViewType;
 
         ImageView imageView;
 
@@ -164,9 +164,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             super(itemView);
 
             textViewUserName = itemView.findViewById(R.id.textViewUserName);
-            textViewUserScore = itemView.findViewById(R.id.textViewUserScore);
             textViewId = itemView.findViewById(R.id.textViewId);
             textViewItemPosition = itemView.findViewById(R.id.textViewItemPosition);
+            textViewType = itemView.findViewById(R.id.textViewType);
 
             imageView = itemView.findViewById(R.id.imageView);
 
