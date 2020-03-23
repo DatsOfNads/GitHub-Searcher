@@ -1,10 +1,20 @@
 package com.company.tochka;
 
+import android.view.View;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.ObservableInt;
 
 import com.google.gson.annotations.SerializedName;
+import com.squareup.picasso.Picasso;
 
 public class UserModel {
+
+    private String numberInList;
+
+    private boolean isLastInList = false;
 
     @SerializedName("login")
     private String login;
@@ -13,7 +23,7 @@ public class UserModel {
     private String avatarURL;
 
     @SerializedName("id")
-    private Integer id;
+    private String id;
 
     @SerializedName("type")
     private String type;
@@ -22,10 +32,36 @@ public class UserModel {
 
     }
 
-    public UserModel (String login, String avatarURL, Integer id){
+    public UserModel (String login, String avatarURL, String id){
         this.login = login;
         this.avatarURL = avatarURL;
         this.id = id;
+    }
+
+    @BindingAdapter("android:src")
+    public static void loadImage(ImageView view, String url) {
+        Picasso.get().load(url).into(view);
+    }
+
+    @BindingAdapter("android:visibility")
+    public static void setVisibility(View view, Boolean value) {
+        view.setVisibility(value ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    public String getNumberInList() {
+        return numberInList;
+    }
+
+    public void setNumberInList(String numberInList) {
+        this.numberInList = numberInList;
+    }
+
+    public boolean isLastInList() {
+        return isLastInList;
+    }
+
+    public void setLastInList(boolean lastInList) {
+        isLastInList = lastInList;
     }
 
     public String getLogin() {
@@ -44,11 +80,11 @@ public class UserModel {
         this.avatarURL = avatarURL;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

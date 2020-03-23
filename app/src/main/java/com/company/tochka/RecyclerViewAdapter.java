@@ -10,8 +10,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.company.tochka.databinding.FragmentUserBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -45,10 +47,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             case ITEM:
 
-                View viewItem = layoutInflater.inflate(R.layout.fragment_user, parent, false);
-                viewHolder = new ItemViewHolder(viewItem);
+                FragmentUserBinding itemBinding =
+                        FragmentUserBinding.inflate(layoutInflater, parent, false);
 
+                viewHolder = new ItemViewHolder(itemBinding);
                 return viewHolder;
+
 
             case LOADING:
 
@@ -68,34 +72,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             case ITEM:
 
-                final ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
-
                 UserModel currentUser = arrayList.get(position);
+                currentUser.setNumberInList(Integer.toString(position + 1));
 
-                String stringLogin = currentUser.getLogin();
-                String stringId = "id: " + currentUser.getId(); //todo стринги
-                String stringType = "type: " + currentUser.getType();
+                if(position == arrayList.size() - 1)
+                    currentUser.setLastInList(true);
 
-                String stringItemPosition = Integer.toString(position + 1);
-
-                itemViewHolder.textViewUserName.setText(stringLogin);
-                itemViewHolder.textViewId.setText(stringId);
-                itemViewHolder.textViewItemPosition.setText(stringItemPosition);
-                itemViewHolder.textViewType.setText(stringType);
-
-                Picasso.get().load(currentUser.getAvatarURL()).into(itemViewHolder.imageView);
-
-                if(position == arrayList.size() - 1){
-                    itemViewHolder.viewLine.setVisibility(View.INVISIBLE);
-                } else
-                    itemViewHolder.viewLine.setVisibility(View.VISIBLE);
-
-                itemViewHolder.constraintLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mCallback.openFullUserInformation(stringLogin);
-                    }
-                });
+                ((ItemViewHolder) holder).bind(currentUser);
 
             case LOADING:
 
@@ -157,32 +140,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class ItemViewHolder extends RecyclerView.ViewHolder{
 
-        ConstraintLayout constraintLayout;
+        private final FragmentUserBinding binding;
 
-        TextView textViewUserName,
-                textViewId, textViewItemPosition, textViewType;
+        private TextView textView;
 
-        ImageView imageView;
+        public ItemViewHolder(FragmentUserBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
 
-        ProgressBar progressBar;
+        public void bind(UserModel userModel){
+            binding.setUser(userModel);
+            binding.executePendingBindings();
 
-        View viewLine;
-
-        ItemViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            constraintLayout = itemView.findViewById(R.id.view);
-
-            textViewUserName = itemView.findViewById(R.id.textViewLogin);
-            textViewId = itemView.findViewById(R.id.textViewId);
-            textViewItemPosition = itemView.findViewById(R.id.textViewItemPosition);
-            textViewType = itemView.findViewById(R.id.textViewType);
-
-            imageView = itemView.findViewById(R.id.imageView);
-
-            progressBar = itemView.findViewById(R.id.progress);
-
-            viewLine = itemView.findViewById(R.id.viewLine);
+            binding.view.setOnClickListener(v -> mCallback.openFullUserInformation(userModel.getLogin()));
         }
     }
 

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
     private boolean isSearch = false;
 
-    private int currentUserId = 1;
+    private String currentUserId = "1";
 
     private String currentUserName;
 
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
     private void loadFirstPage() {
 
-        currentUserId = 0;
+        currentUserId = "0";
 
         Call<ArrayList<UserModel>> call = service.getAllUsers(currentUserId);
 
@@ -289,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     private interface GetDataService {
 
         @GET("/users")
-        Call<ArrayList<UserModel>> getAllUsers(@Query("since") long id);
+        Call<ArrayList<UserModel>> getAllUsers(@Query("since") String id);
 
         @GET("search/users")
         Call<ItemModel> getUsersWithPageParam(@Query("q") String userName, @Query("page") long pageNum);

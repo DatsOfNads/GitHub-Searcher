@@ -5,12 +5,8 @@ import androidx.databinding.DataBindingUtil;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import com.company.tochka.databinding.ActivityUserBinding;
 
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,8 +28,6 @@ public class UserActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         String login = intent.getStringExtra("extra_login");
-
-        System.err.println("Получили "+ login);
 
         Call<FullUserModel> call = service.getAllUsers(login);
 
