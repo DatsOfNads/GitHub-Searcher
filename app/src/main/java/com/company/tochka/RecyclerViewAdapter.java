@@ -86,6 +86,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
                 Picasso.get().load(currentUser.getAvatarURL()).into(itemViewHolder.imageView);
 
+                if(position == arrayList.size() - 1){
+                    itemViewHolder.viewLine.setVisibility(View.INVISIBLE);
+                } else
+                    itemViewHolder.viewLine.setVisibility(View.VISIBLE);
+
             case LOADING:
 
                 //final LoadingViewHolder loadingViewHolder = (RecyclerViewAdapter.LoadingViewHolder) holder;
@@ -109,6 +114,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public void removeLoadingFooter() {
+        if(!isLoadingAdded)
+            return;
+
         isLoadingAdded = false;
 
         int position = arrayList.size() - 1;
@@ -148,6 +156,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         ImageView imageView;
 
+        ProgressBar progressBar;
+
+        View viewLine;
+
         ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -157,6 +169,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             textViewItemPosition = itemView.findViewById(R.id.textViewItemPosition);
 
             imageView = itemView.findViewById(R.id.imageView);
+
+            progressBar = itemView.findViewById(R.id.progress);
+
+            viewLine = itemView.findViewById(R.id.viewLine);
         }
     }
 

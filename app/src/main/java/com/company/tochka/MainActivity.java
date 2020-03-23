@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -92,12 +93,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         loadFirstPage();
     }
 
-    private void setRecyclerView(){
-
-
-
-}
-
     private void search(){
 
         System.err.println("Ищем " + currentUserName + currentPageNumber);
@@ -116,13 +111,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                 currentCount = arrayList.size();
 
+                adapter.addAll(arrayList);
+
                 if(currentCount < currentTotalCount){
                     currentPageNumber++;
+                    adapter.addLoadingFooter();
                 } else {
                     isLastPage = true;
                 }
-
-                adapter.addAll(arrayList);
             }
 
             @Override
@@ -142,20 +138,24 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             @Override
             public void onResponse(Call<ItemModel> call, Response<ItemModel> response) {
 
+                adapter.removeLoadingFooter();
+
                 ArrayList<UserModel> arrayList = response.body().getItems();
 
                 currentCount += arrayList.size();
 
                 isLoading = false;
 
+                adapter.addAll(arrayList);
+
                 if(currentCount < currentTotalCount){
                     currentPageNumber++;
+                    adapter.addLoadingFooter();
                 } else {
+                    adapter.removeLoadingFooter();
                     isLastPage = true;
 
                 }
-
-                adapter.addAll(arrayList);
             }
 
             @Override
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             public void onResponse(Call<ArrayList<UserModel>> call, Response<ArrayList<UserModel>> response) {
 
                 ArrayList<UserModel> arrayList = response.body();
-                adapter.addAll(arrayList);
+                adapter.addAll(Objects.requireNonNull(arrayList));//todo обработай!
 
                 adapter.addLoadingFooter();
                 getLastElementId(arrayList);
@@ -241,8 +241,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                 currentPageNumber = 1;
 
-                setRecyclerView();
-
                 search();
 
                 return false;
@@ -262,7 +260,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                     isSearch = false;
                     isLastPage = false;
                     adapter.removeAll();
-                    setRecyclerView();
                     loadFirstPage();
                 }
 
