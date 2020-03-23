@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
         service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.tool);
         toolbar.setTitleTextColor(getColor(R.color.colorWhite));
         toolbar.setTitle(R.string.app_name);
 
@@ -266,11 +265,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         });
 
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
     }
 
     private void getLastElementId(ArrayList<UserModel> arrayList){

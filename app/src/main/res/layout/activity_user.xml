@@ -1,4 +1,4 @@
-<layout
+<layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
@@ -10,23 +10,32 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/view"
-        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tool"
+            style="@style/Toolbar"
+            app:title="@{user.login}"
+            app:subtitleTextColor="@color/colorWhite"
+            android:elevation="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:titleTextColor="@color/colorAccent" />
 
         <TextView
             android:id="@+id/textViewLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@{user.login}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
             app:layout_constraintStart_toEndOf="@+id/card"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/tool" />
 
         <TextView
             android:id="@+id/textViewName"
@@ -47,12 +56,12 @@
             android:id="@+id/card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="4dp"
-            android:elevation="2dp"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:elevation="2dp"
+            app:cardCornerRadius="4dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/tool">
 
             <ProgressBar
                 android:id="@+id/progress"

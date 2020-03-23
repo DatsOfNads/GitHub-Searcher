@@ -142,8 +142,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         private final FragmentUserBinding binding;
 
-        private TextView textView;
-
         public ItemViewHolder(FragmentUserBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
@@ -159,12 +157,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class LoadingViewHolder extends RecyclerView.ViewHolder{
 
-        private ProgressBar progressBar;
-
-        public LoadingViewHolder(@NonNull View itemView) {
+        LoadingViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            progressBar = itemView.findViewById(R.id.progressBar);
         }
     }
 
