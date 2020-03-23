@@ -1,7 +1,6 @@
 package com.company.tochka;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
@@ -76,7 +76,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 String stringId = "id: " + currentUser.getId(); //todo стринги
                 String stringType = "type: " + currentUser.getType();
 
-
                 String stringItemPosition = Integer.toString(position + 1);
 
                 itemViewHolder.textViewUserName.setText(stringLogin);
@@ -90,6 +89,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     itemViewHolder.viewLine.setVisibility(View.INVISIBLE);
                 } else
                     itemViewHolder.viewLine.setVisibility(View.VISIBLE);
+
+                itemViewHolder.constraintLayout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mCallback.openFullUserInformation(stringLogin);
+                    }
+                });
 
             case LOADING:
 
@@ -151,6 +157,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class ItemViewHolder extends RecyclerView.ViewHolder{
 
+        ConstraintLayout constraintLayout;
+
         TextView textViewUserName,
                 textViewId, textViewItemPosition, textViewType;
 
@@ -163,7 +171,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            textViewUserName = itemView.findViewById(R.id.textViewUserName);
+            constraintLayout = itemView.findViewById(R.id.view);
+
+            textViewUserName = itemView.findViewById(R.id.textViewLogin);
             textViewId = itemView.findViewById(R.id.textViewId);
             textViewItemPosition = itemView.findViewById(R.id.textViewItemPosition);
             textViewType = itemView.findViewById(R.id.textViewType);
@@ -188,6 +198,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public interface RecyclerViewAdapterCallback {
-        void retryPageLoad();
+        void openFullUserInformation(String login);
     }
 }

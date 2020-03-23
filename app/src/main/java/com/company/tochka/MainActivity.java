@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
         service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
 
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(getColor(R.color.colorWhite));
         toolbar.setTitle(R.string.app_name);
@@ -81,14 +81,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             @Override
             public boolean isLastPage() {
                 return isLastPage;
-            }//todo а это походу не надо
+            }
 
             @Override
             public boolean isLoading() {
                 return isLoading;
             }
         });
-        //setRecyclerView();
 
         if(!isSearch)
         loadFirstPage();
@@ -280,8 +279,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     }
 
     @Override
-    public void retryPageLoad() {
+    public void openFullUserInformation(String login) {
 
+        Intent intent = new Intent(MainActivity.this, UserActivity.class);
+        intent.putExtra("extra_login", login);
+        startActivity(intent);
     }
 
     private interface GetDataService {

@@ -22,7 +22,7 @@ public class UserModel {
 
     }
 
-    public UserModel (String login, String avatarURL, Integer id, Integer score){
+    public UserModel (String login, String avatarURL, Integer id){
         this.login = login;
         this.avatarURL = avatarURL;
         this.id = id;
