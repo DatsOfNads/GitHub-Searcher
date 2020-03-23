@@ -12,7 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -119,6 +118,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             arrayList.remove(position);
             notifyItemRemoved(position);
         }
+    }
+
+    public void removeAll(){
+        removeLoadingFooter();
+        arrayList.clear();
+        notifyDataSetChanged();
     }
 
     @Override

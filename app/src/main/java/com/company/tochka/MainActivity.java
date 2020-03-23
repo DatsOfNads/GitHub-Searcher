@@ -31,22 +31,22 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private int currentUserId = 0;
+
+    private boolean isSearch = false;
+
+    private int currentUserId = 1;
+
+    private String currentUserName;
+
+    private int currentPageNumber, currentCount, currentTotalCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = findViewById(R.id.recyclerView);
-
         service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
 
-        adapter = new RecyclerViewAdapter(this);
-        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());//todo я не знаю что ета такое)))0)
-        recyclerView.setAdapter(adapter);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(getColor(R.color.colorWhite));
@@ -54,30 +54,117 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
         setSupportActionBar(toolbar);
 
+        recyclerView = findViewById(R.id.recyclerView);
+
+        adapter = new RecyclerViewAdapter(this);
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());//todo я не знаю что ета такое)))0)
+        recyclerView.setAdapter(adapter);
+
         recyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
             protected void loadMoreItems() {
-                isLoading = true;
+
                 System.err.println("Это конец");
-                loadNextPage();
 
-                //adapter.removeLoadingFooter();
+                isLoading = true;
 
+                if(!isSearch)
+                    loadNextPage();
+                else
+                    searchNextPage();
             }
 
             @Override
             public boolean isLastPage() {
                 return isLastPage;
-            }
+            }//todo а это походу не надо
 
             @Override
             public boolean isLoading() {
                 return isLoading;
             }
         });
+        //setRecyclerView();
 
+        if(!isSearch)
         loadFirstPage();
     }
+
+    private void setRecyclerView(){
+
+
+
+}
+
+    private void search(){
+
+        System.err.println("Ищем " + currentUserName + currentPageNumber);
+
+        Call<ItemModel> call = service.getUsersWithPageParam(currentUserName,currentPageNumber);
+
+        call.enqueue(new Callback<ItemModel>() {
+            @Override
+            public void onResponse(Call<ItemModel> call, Response<ItemModel> response) {
+
+                isSearch = true;
+
+                ArrayList<UserModel> arrayList = response.body().getItems();
+
+                currentTotalCount = response.body().getTotalCount();
+
+                currentCount = arrayList.size();
+
+                if(currentCount < currentTotalCount){
+                    currentPageNumber++;
+                } else {
+                    isLastPage = true;
+                }
+
+                adapter.addAll(arrayList);
+            }
+
+            @Override
+            public void onFailure(Call<ItemModel> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void searchNextPage(){
+
+        System.err.println("Ищем " + currentUserName + currentPageNumber);
+
+        Call<ItemModel> call = service.getUsersWithPageParam(currentUserName,currentPageNumber);
+
+        call.enqueue(new Callback<ItemModel>() {
+            @Override
+            public void onResponse(Call<ItemModel> call, Response<ItemModel> response) {
+
+                ArrayList<UserModel> arrayList = response.body().getItems();
+
+                currentCount += arrayList.size();
+
+                isLoading = false;
+
+                if(currentCount < currentTotalCount){
+                    currentPageNumber++;
+                } else {
+                    isLastPage = true;
+
+                }
+
+                adapter.addAll(arrayList);
+            }
+
+            @Override
+            public void onFailure(Call<ItemModel> call, Throwable t) {
+
+            }
+        });
+    }
+
 
     private void loadFirstPage() {
 
@@ -95,8 +182,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 adapter.addLoadingFooter();
                 getLastElementId(arrayList);
 
-//                if (currentPage <= 10) adapter.addLoadingFooter();
-//                else isLastPage = true;
             }
 
             @Override
@@ -105,42 +190,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             }
         });
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) { //устанавливаем созданое меню
-
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_activity_menu, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-
-        SearchView searchView = (SearchView) searchItem.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                System.err.println(newText);
-                return false;
-            }
-        });
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void getLastElementId(ArrayList<UserModel> arrayList){
-        UserModel user = arrayList.get(arrayList.size() - 1);
-        currentUserId = user.getId();
     }
 
     private void loadNextPage(){
@@ -169,6 +218,72 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         });
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main_activity_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                adapter.removeAll();
+
+                isLastPage = false;
+
+                currentUserName = query;
+
+                currentPageNumber = 1;
+
+                setRecyclerView();
+
+                search();
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+
+                if(isSearch){
+                    isSearch = false;
+                    isLastPage = false;
+                    adapter.removeAll();
+                    setRecyclerView();
+                    loadFirstPage();
+                }
+
+                return false;
+            }
+        });
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void getLastElementId(ArrayList<UserModel> arrayList){
+        UserModel user = arrayList.get(arrayList.size() - 1);
+        currentUserId = user.getId();
+    }
+
     @Override
     public void retryPageLoad() {
 
@@ -180,6 +295,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         Call<ArrayList<UserModel>> getAllUsers(@Query("since") long id);
 
         @GET("search/users")
-        Call<ArrayList<UserModel>> getUsersWithPageParam(@Query("q") String user, @Query("page") long pageNumber);
+        Call<ItemModel> getUsersWithPageParam(@Query("q") String userName, @Query("page") long pageNum);
     }
 }
