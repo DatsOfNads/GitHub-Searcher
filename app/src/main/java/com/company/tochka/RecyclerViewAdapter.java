@@ -4,17 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.tochka.databinding.FragmentUserBinding;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -25,14 +20,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private boolean isLoadingAdded;
 
-    private Context context;
-
     private ArrayList<UserModel> arrayList = new ArrayList<>();
 
-    RecyclerViewAdapterCallback mCallback;
+    private RecyclerViewAdapterCallback mCallback;
 
     RecyclerViewAdapter(Context context){
-        this.context = context;
         this.mCallback = (RecyclerViewAdapterCallback) context;
     }
 
@@ -68,23 +60,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        switch (getItemViewType(position)){
+        if(getItemViewType(position) == ITEM){
 
-            case ITEM:
+            UserModel currentUser = arrayList.get(position);
+            currentUser.setNumberInList(Integer.toString(position + 1));
 
-                UserModel currentUser = arrayList.get(position);
-                currentUser.setNumberInList(Integer.toString(position + 1));
+            if(position == arrayList.size() - 1)
+                currentUser.setLastInList(true);
 
-                if(position == arrayList.size() - 1)
-                    currentUser.setLastInList(true);
-
-                ((ItemViewHolder) holder).bind(currentUser);
-
-            case LOADING:
-
-                //final LoadingViewHolder loadingViewHolder = (RecyclerViewAdapter.LoadingViewHolder) holder;
-
-
+            ((ItemViewHolder) holder).bind(currentUser);
         }
     }
     

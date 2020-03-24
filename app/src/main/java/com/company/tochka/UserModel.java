@@ -32,12 +32,6 @@ public class UserModel {
 
     }
 
-    public UserModel (String login, String avatarURL, String id){
-        this.login = login;
-        this.avatarURL = avatarURL;
-        this.id = id;
-    }
-
     @BindingAdapter("android:src")
     public static void loadImage(ImageView view, String url) {
         Picasso.get().load(url).into(view);
@@ -94,11 +88,5 @@ public class UserModel {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "login " + this.login;
     }
 }

@@ -7,11 +7,9 @@ import androidx.databinding.DataBindingUtil;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 
 import com.company.tochka.databinding.ActivityUserBinding;
-
 
 import java.util.Objects;
 
@@ -20,6 +18,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.internal.EverythingIsNonNull;
 
 public class UserActivity extends AppCompatActivity {
 
@@ -47,21 +46,38 @@ public class UserActivity extends AppCompatActivity {
 
         String login = intent.getStringExtra("extra_login");
 
+        loadUserInfo(Objects.requireNonNull(login));
+
+    }
+
+    @EverythingIsNonNull
+    private void loadUserInfo(String login){
+
         Call<FullUserModel> call = service.getAllUsers(login);
 
         call.enqueue(new Callback<FullUserModel>() {
             @Override
             public void onResponse(Call<FullUserModel> call, Response<FullUserModel> response) {
-               setView(response.body());
+                setView(response.body());
             }
 
             @Override
             public void onFailure(Call<FullUserModel> call, Throwable t) {
 
+                final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(UserActivity.this,
+                        R.string.alert_dialog_error);
+
+                customAlertDialogInfo.setTitle(R.string.something_went_wrong);
+                customAlertDialogInfo.setMessage(R.string.please_try_again);
+                customAlertDialogInfo.show();
+
+                customAlertDialogInfo.setButtonClickListener(v -> {
+                    loadUserInfo(login);
+                    customAlertDialogInfo.dismiss();
+                });
             }
         });
     }
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
