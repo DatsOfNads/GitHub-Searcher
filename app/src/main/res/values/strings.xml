@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">GitHub searcher</string>
+    <string name="alert_dialog_error"> Попробовать ещё раз </string>
+    <string name="nothing_was_found_for_your_search">По вашему запросу ничего не найдено</string>
 </resources>

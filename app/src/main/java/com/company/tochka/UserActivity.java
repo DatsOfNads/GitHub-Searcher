@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 
 import com.company.tochka.databinding.ActivityUserBinding;

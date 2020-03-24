@@ -27,7 +27,7 @@ public abstract class PaginationScrollListener extends RecyclerView.OnScrollList
         }
 
     }
-//todo што ета там внизу, Джони?
+
     protected abstract void loadMoreItems();
 
     public abstract boolean isLastPage();
