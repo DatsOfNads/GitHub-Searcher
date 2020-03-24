@@ -128,12 +128,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         private final FragmentUserBinding binding;
 
-        public ItemViewHolder(FragmentUserBinding binding) {
+        ItemViewHolder(FragmentUserBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
-        public void bind(UserModel userModel){
+        void bind(UserModel userModel){
             binding.setUser(userModel);
             binding.executePendingBindings();
 
