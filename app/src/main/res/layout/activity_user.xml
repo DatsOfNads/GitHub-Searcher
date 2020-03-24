@@ -6,6 +6,7 @@
         <variable
             name="user"
             type="com.company.tochka.FullUserModel" />
+        <import type="android.view.View" alias="v"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,27 +27,30 @@
 
         <TextView
             android:id="@+id/textViewLogin"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:text="@{user.login}"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textSize="18sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/card"
             app:layout_constraintTop_toBottomOf="@+id/tool" />
 
         <TextView
             android:id="@+id/textViewName"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@{user.name}"
+            android:text="@{`Name: ` + user.name}"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/textViewLocation"
+            android:visibility="@{user.name == null ? v.GONE : v.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/card"
@@ -82,52 +86,59 @@
 
         <TextView
             android:id="@+id/textViewLocation"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@{user.location}"
+            android:text="@{`Location: ` + user.location}"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/card"
+            android:visibility="@{user.location == null ? v.GONE : v.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/textViewName" />
+            app:layout_constraintStart_toEndOf="@+id/card"
+            app:layout_constraintTop_toBottomOf="@+id/textViewName" />
 
         <TextView
             android:id="@+id/textViewFollowers"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@{user.followers}"
-            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/viewLine"
-            app:layout_constraintTop_toBottomOf="@+id/viewLine" />
-
-        <TextView
-            android:id="@+id/textViewBlog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@{user.blog}"
+            android:text="@{`Followers: ` + user.followers}"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/textViewBio"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPublicGists" />
+
+        <TextView
+            android:id="@+id/textViewBlog"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@{`Blog: ` + user.blog}"
+            android:visibility="@{user.blog.equals(``) ? v.GONE : v.VISIBLE}"
+            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewBio" />
 
         <View
             android:id="@+id/viewLine"
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:background="#c0c0c0"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/textViewBio"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewBlog" />
 
         <TextView
@@ -137,41 +148,42 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:text="@{user.bio}"
+            android:text="@{`Bio: ` + user.bio}"
+            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+            android:textSize="16sp"
+            android:visibility="@{user.bio == null ? v.GONE : v.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card" />
+
+        <TextView
+            android:id="@+id/textViewPublicRepos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@{`Public repos: ` + user.publicRepos}"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewLocation" />
-
-        <TextView
-            android:id="@+id/textViewPublicRepos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:text="@{user.publicRepos}"
-            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/textViewFollowers"
             app:layout_constraintTop_toBottomOf="@+id/viewLine" />
 
         <TextView
             android:id="@+id/textViewPublicGists"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@{user.publicGists}"
+            android:text="@{`Public gists: ` + user.publicGists}"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/textViewFollowers"
-            app:layout_constraintTop_toBottomOf="@+id/textViewFollowers" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPublicRepos" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -44,10 +44,6 @@ public class FullUserModel {
         Picasso.get().load(url).into(view);
     }
 
-//    public FullUserModel(String name, String company, String blog, String location, Integer publicRepos, Integer publicGists, Integer followers){
-//        this.name = name;
-//    }
-
     public String getLogin() {
         return login;
     }
