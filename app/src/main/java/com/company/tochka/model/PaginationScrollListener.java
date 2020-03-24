@@ -1,4 +1,4 @@
-package com.company.tochka.Model;
+package com.company.tochka.model;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;

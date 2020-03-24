@@ -1,4 +1,4 @@
-package com.company.tochka.Model;
+package com.company.tochka.model;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.tochka.R;
-import com.company.tochka.UserModel;
 import com.company.tochka.databinding.FragmentUserBinding;
 
 import java.util.ArrayList;

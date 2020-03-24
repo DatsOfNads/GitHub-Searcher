@@ -1,11 +1,9 @@
-package com.company.tochka;
+package com.company.tochka.model;
 
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.databinding.BindingAdapter;
-import androidx.databinding.ObservableInt;
 
 import com.google.gson.annotations.SerializedName;
 import com.squareup.picasso.Picasso;
@@ -28,7 +26,7 @@ public class UserModel {
     @SerializedName("type")
     private String type;
 
-    public UserModel(){
+    UserModel(){
 
     }
 

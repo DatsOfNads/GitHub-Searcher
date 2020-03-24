@@ -5,7 +5,7 @@
     <data>
         <variable
             name="user"
-            type="com.company.tochka.Model.FullUserModel" />
+            type="com.company.tochka.model.FullUserModel" />
         <import type="android.view.View" alias="v"/>
     </data>
 

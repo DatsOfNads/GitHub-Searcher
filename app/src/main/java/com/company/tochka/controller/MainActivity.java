@@ -1,4 +1,4 @@
-package com.company.tochka.Controller;
+package com.company.tochka.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -16,13 +16,13 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.company.tochka.Model.CustomAlertDialog;
-import com.company.tochka.Model.ItemModel;
-import com.company.tochka.Model.PaginationScrollListener;
+import com.company.tochka.model.CustomAlertDialog;
+import com.company.tochka.model.ItemModel;
+import com.company.tochka.model.PaginationScrollListener;
 import com.company.tochka.R;
-import com.company.tochka.Model.RecyclerViewAdapter;
-import com.company.tochka.Model.RetrofitClientInstance;
-import com.company.tochka.UserModel;
+import com.company.tochka.model.RecyclerViewAdapter;
+import com.company.tochka.model.RetrofitClientInstance;
+import com.company.tochka.model.UserModel;
 
 import java.util.ArrayList;
 
