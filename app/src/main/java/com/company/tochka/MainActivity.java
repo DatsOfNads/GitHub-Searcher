@@ -23,10 +23,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
+import retrofit2.internal.EverythingIsNonNull;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.RecyclerViewAdapterCallback {
 
-    private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private LinearLayoutManager linearLayoutManager;
     private ProgressBar progressBar;
@@ -35,10 +35,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
-
     private boolean isSearch = false;
 
-    private String currentUserId = "1";
+    private String currentUserId = "0";
 
     private String currentUserName;
 
@@ -46,36 +45,35 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
 
-        Toolbar toolbar = findViewById(R.id.tool);
-        toolbar.setTitleTextColor(getColor(R.color.colorWhite));
-        toolbar.setTitle(R.string.app_name);
+        adapter = new RecyclerViewAdapter(this);
 
-        setSupportActionBar(toolbar);
-
-        recyclerView = findViewById(R.id.recyclerView);
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
         progressBar = findViewById(R.id.progressBar);
 
-        adapter = new RecyclerViewAdapter(this);
-        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        Toolbar toolbar = findViewById(R.id.tool);
+        toolbar.setTitleTextColor(getColor(R.color.colorWhite));
+        toolbar.setTitle(R.string.app_name);
+        setSupportActionBar(toolbar);
+
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());//todo я не знаю что ета такое)))0)
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
         recyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
             protected void loadMoreItems() {
 
-                System.err.println("Это конец");
-
                 isLoading = true;
 
-                if(!isSearch)
+                if (!isSearch)
                     loadNextPage();
                 else
                     searchNextPage();
@@ -92,8 +90,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             }
         });
 
-        if(!isSearch)
-        loadFirstPage();
+        if (!isSearch)
+            loadFirstPage();
     }
 
     @Override
@@ -134,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
         searchView.setOnCloseListener(() -> {
 
-            if(isSearch){
+            if (isSearch) {
 
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -150,19 +148,107 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void search(){
+    @EverythingIsNonNull
+    private void loadFirstPage() {
 
-        System.err.println("Ищем " + currentUserName + currentPageNumber);
+        currentUserId = "0";
 
-        Call<ItemModel> call = service.getUsersWithPageParam(currentUserName,currentPageNumber);
+        Call<ArrayList<UserModel>> call = service.getAllUsers(currentUserId);
+
+        call.enqueue(new Callback<ArrayList<UserModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserModel>> call, Response<ArrayList<UserModel>> response) {
+                progressBar.setVisibility(View.INVISIBLE);
+
+                ArrayList<UserModel> arrayList = response.body();
+
+                if (arrayList != null) {
+
+                    adapter.addAll(arrayList);
+
+                    adapter.addLoadingFooter();
+                    setCurrentUserId(arrayList);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<UserModel>> call, Throwable t) {
+
+                final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
+                        R.string.alert_dialog_error);
+
+                customAlertDialogInfo.setTitle(R.string.something_went_wrong);
+                customAlertDialogInfo.setMessage(R.string.please_try_again);
+                customAlertDialogInfo.show();
+
+                customAlertDialogInfo.setButtonClickListener(v -> {
+
+                    loadFirstPage();
+                    customAlertDialogInfo.dismiss();
+                });
+            }
+        });
+
+    }
+
+    @EverythingIsNonNull
+    private void loadNextPage() {
+
+        Call<ArrayList<UserModel>> call = service.getAllUsers(currentUserId);
+
+        call.enqueue(new Callback<ArrayList<UserModel>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserModel>> call, Response<ArrayList<UserModel>> response) {
+
+                ArrayList<UserModel> arrayList = response.body();
+
+                if (arrayList != null) {
+
+                    adapter.removeLoadingFooter();
+                    adapter.addAll(arrayList);
+
+                    isLoading = false;
+
+                    setCurrentUserId(arrayList);
+
+                    adapter.addLoadingFooter();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<UserModel>> call, Throwable t) {
+
+                final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
+                        R.string.alert_dialog_error);
+
+                customAlertDialogInfo.setTitle(R.string.something_went_wrong);
+                customAlertDialogInfo.setMessage(R.string.please_try_again);
+                customAlertDialogInfo.show();
+
+                customAlertDialogInfo.setButtonClickListener(v -> {
+
+                    loadNextPage();
+                    customAlertDialogInfo.dismiss();
+                });
+            }
+        });
+    }
+
+    @EverythingIsNonNull
+    private void search() {
+
+        Call<ItemModel> call = service.getUsersWithPageParam(currentUserName, currentPageNumber);
 
         call.enqueue(new Callback<ItemModel>() {
             @Override
             public void onResponse(Call<ItemModel> call, Response<ItemModel> response) {
 
-                ArrayList<UserModel> arrayList = null;
+                ArrayList<UserModel> arrayList;
 
                 if (response.body() != null) {
+
                     arrayList = response.body().getItems();
 
                     progressBar.setVisibility(View.INVISIBLE);
@@ -171,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                     currentTotalCount = response.body().getTotalCount();
 
-                    if(currentTotalCount == 0){
+                    if (currentTotalCount == 0) {
                         Toast.makeText(MainActivity.this, R.string.nothing_was_found_for_your_search, Toast.LENGTH_SHORT).show();
                     }
 
@@ -179,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                     adapter.addAll(arrayList);
 
-                    if(currentCount < currentTotalCount){
+                    if (currentCount < currentTotalCount) {
                         currentPageNumber++;
                         adapter.addLoadingFooter();
                     } else {
@@ -194,8 +280,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
                         R.string.alert_dialog_error);
 
-                customAlertDialogInfo.setTitle("Что-то пошло не так(");
-                customAlertDialogInfo.setMessage("Скорее всего это не наша вина. Попробуйте ещё раз.");
+                customAlertDialogInfo.setTitle(R.string.something_went_wrong);
+                customAlertDialogInfo.setMessage(R.string.please_try_again);
                 customAlertDialogInfo.show();
 
                 customAlertDialogInfo.setButtonClickListener(v -> {
@@ -207,7 +293,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         });
     }
 
-    private void searchNextPage(){
+    @EverythingIsNonNull
+    private void searchNextPage() {
 
         Call<ItemModel> call = service.getUsersWithPageParam(currentUserName, currentPageNumber);
 
@@ -229,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                     adapter.addAll(arrayList);
 
-                    if(currentCount < currentTotalCount){
+                    if (currentCount < currentTotalCount) {
                         currentPageNumber++;
                         adapter.addLoadingFooter();
                     } else {
@@ -238,7 +325,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                     }
                 }
-
             }
 
             @Override
@@ -246,8 +332,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
                         R.string.alert_dialog_error);
 
-                customAlertDialogInfo.setTitle("Что-то пошло не так(");
-                customAlertDialogInfo.setMessage("Скорее всего это не наша вина. Попробуйте ещё раз.");
+                customAlertDialogInfo.setTitle(R.string.something_went_wrong);
+                customAlertDialogInfo.setMessage(R.string.please_try_again);
                 customAlertDialogInfo.show();
 
                 customAlertDialogInfo.setButtonClickListener(v -> {
@@ -259,94 +345,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         });
     }
 
-
-    private void loadFirstPage() {
-
-        currentUserId = "0";
-
-        Call<ArrayList<UserModel>> call = service.getAllUsers(currentUserId);
-
-        call.enqueue(new Callback<ArrayList<UserModel>>() {
-            @Override
-            public void onResponse(Call<ArrayList<UserModel>> call, Response<ArrayList<UserModel>> response) {
-                progressBar.setVisibility(View.INVISIBLE);
-
-                ArrayList<UserModel> arrayList = response.body();
-
-                if (arrayList != null) {
-
-                    adapter.addAll(arrayList);
-
-                    adapter.addLoadingFooter();
-                    setLastElementId(arrayList);
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<UserModel>> call, Throwable t) {
-
-                final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
-                        R.string.alert_dialog_error);
-
-                customAlertDialogInfo.setTitle("Что-то пошло не так(");
-                customAlertDialogInfo.setMessage("Скорее всего это не наша вина. Попробуйте ещё раз.");
-                customAlertDialogInfo.show();
-
-                customAlertDialogInfo.setButtonClickListener(v -> {
-
-                    loadFirstPage();
-                    customAlertDialogInfo.dismiss();
-                });
-            }
-        });
-
-    }
-
-    private void loadNextPage(){
-
-        Call<ArrayList<UserModel>> call = service.getAllUsers(currentUserId);
-
-        call.enqueue(new Callback<ArrayList<UserModel>>() {
-            @Override
-            public void onResponse(Call<ArrayList<UserModel>> call, Response<ArrayList<UserModel>> response) {
-
-                ArrayList<UserModel> arrayList = response.body();
-
-                if (arrayList != null) {
-
-                    adapter.removeLoadingFooter();
-                    adapter.addAll(arrayList);
-
-                    isLoading = false;
-
-                    setLastElementId(arrayList);
-
-                    adapter.addLoadingFooter();
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<UserModel>> call, Throwable t) {
-
-                final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
-                        R.string.alert_dialog_error);
-
-                customAlertDialogInfo.setTitle("Что-то пошло не так(");
-                customAlertDialogInfo.setMessage("Скорее всего это не наша вина. Попробуйте ещё раз.");
-                customAlertDialogInfo.show();
-
-                customAlertDialogInfo.setButtonClickListener(v -> {
-
-                    loadNextPage();
-                    customAlertDialogInfo.dismiss();
-                });
-            }
-        });
-    }
-
-    private void setLastElementId(ArrayList<UserModel> arrayList){
+    private void setCurrentUserId(ArrayList<UserModel> arrayList) {
         UserModel user = arrayList.get(arrayList.size() - 1);
         currentUserId = user.getId();
     }
