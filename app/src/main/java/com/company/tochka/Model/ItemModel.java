@@ -1,5 +1,6 @@
-package com.company.tochka;
+package com.company.tochka.Model;
 
+import com.company.tochka.UserModel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

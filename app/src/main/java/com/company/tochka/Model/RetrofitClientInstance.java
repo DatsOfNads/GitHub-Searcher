@@ -1,4 +1,4 @@
-package com.company.tochka;
+package com.company.tochka.Model;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

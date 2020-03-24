@@ -1,4 +1,4 @@
-package com.company.tochka;
+package com.company.tochka.Model;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.company.tochka.R;
+import com.company.tochka.UserModel;
 import com.company.tochka.databinding.FragmentUserBinding;
 
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private RecyclerViewAdapterCallback mCallback;
 
-    RecyclerViewAdapter(Context context){
+    public RecyclerViewAdapter(Context context){
         this.mCallback = (RecyclerViewAdapterCallback) context;
     }
 
@@ -72,7 +74,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
     
-    void addAll(ArrayList<UserModel> arrayList){
+    public void addAll(ArrayList<UserModel> arrayList){
 
         for (UserModel userModel : arrayList) {
             this.arrayList.add(userModel);

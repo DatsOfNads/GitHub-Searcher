@@ -1,4 +1,4 @@
-package com.company.tochka;
+package com.company.tochka.Model;
 
 
 import android.annotation.SuppressLint;
@@ -6,6 +6,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
+
+import com.company.tochka.R;
 
 public class CustomAlertDialog extends AlertDialog {
 

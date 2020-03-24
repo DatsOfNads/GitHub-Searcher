@@ -1,4 +1,4 @@
-package com.company.tochka;
+package com.company.tochka.Model;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,7 +7,7 @@ public abstract class PaginationScrollListener extends RecyclerView.OnScrollList
 
     private LinearLayoutManager layoutManager;
 
-    PaginationScrollListener(LinearLayoutManager layoutManager) {
+    public PaginationScrollListener(LinearLayoutManager layoutManager) {
         this.layoutManager = layoutManager;
     }
 
