@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.company.tochka.Model.CustomAlertDialog;
-import com.company.tochka.FullUserModel;
+import com.company.tochka.Model.FullUserModel;
 import com.company.tochka.R;
 import com.company.tochka.Model.RetrofitClientInstance;
 import com.company.tochka.databinding.ActivityUserBinding;

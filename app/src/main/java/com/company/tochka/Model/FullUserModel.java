@@ -1,4 +1,4 @@
-package com.company.tochka;
+package com.company.tochka.Model;
 
 import android.widget.ImageView;
 
