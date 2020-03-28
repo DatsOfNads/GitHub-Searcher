@@ -134,9 +134,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         void bind(UserModel userModel){
             binding.setUser(userModel);
-            binding.executePendingBindings();
-
             binding.view.setOnClickListener(v -> mCallback.openFullUserInformation(userModel.getLogin()));
+
+            binding.executePendingBindings();
         }
     }
 

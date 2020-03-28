@@ -49,7 +49,8 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:src="@{user.avatarURL}"
-                tools:srcCompat="@tools:sample/avatars" />
+                tools:srcCompat="@tools:sample/avatars"
+                tools:ignore="ContentDescription" />
 
         </androidx.cardview.widget.CardView>
 
@@ -61,6 +62,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="@{user.login}"
+            tools:text="superuser"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -75,7 +77,8 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@{`Name: ` + user.name}"
+            android:text="@{String.format(@string/name, user.name)}"
+            tools:text="Name: Konstantin Drobsky"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
             android:visibility="@{user.name == null ? v.GONE : v.VISIBLE}"
@@ -91,7 +94,8 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@{`Location: ` + user.location}"
+            android:text="@{String.format(@string/location, user.location)}"
+            tools:text="Location: Yekaterinburg"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
             android:visibility="@{user.location == null ? v.GONE : v.VISIBLE}"
@@ -101,18 +105,20 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewName" />
 
         <TextView
-            android:id="@+id/textViewFollowers"
+            android:id="@+id/textViewBio"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:text="@{`Followers: ` + user.followers}"
+            android:text="@{String.format(@string/bio, user.bio)}"
+            tools:text="Bio: I love programming!"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
+            android:visibility="@{user.bio == null ? v.GONE : v.VISIBLE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewPublicGists" />
+            app:layout_constraintTop_toBottomOf="@+id/card" />
 
         <TextView
             android:id="@+id/textViewBlog"
@@ -124,6 +130,7 @@
             android:autoLink="web"
             android:text="@{user.blog}"
             android:visibility="@{user.blog.equals(``) ? v.GONE : v.VISIBLE}"
+            tools:text="https://mysyte.com"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -143,28 +150,14 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewBlog" />
 
         <TextView
-            android:id="@+id/textViewBio"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="@{`Bio: ` + user.bio}"
-            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
-            android:textSize="16sp"
-            android:visibility="@{user.bio == null ? v.GONE : v.VISIBLE}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card" />
-
-        <TextView
             android:id="@+id/textViewPublicRepos"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@{`Public repos: ` + user.publicRepos}"
+            android:text="@{String.format(@string/public_repos, user.publicRepos)}"
+            tools:text="Public repos: 15"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -178,13 +171,29 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="@{`Public gists: ` + user.publicGists}"
+            android:text="@{String.format(@string/public_gists, user.publicGists)}"
+            tools:text="Public gists: 21"
             android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewPublicRepos" />
+
+        <TextView
+            android:id="@+id/textViewFollowers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@{String.format(@string/followers, user.followers)}"
+            tools:text="Followers: 145"
+            android:textAppearance="@style/TextAppearance.AppCompat.SearchResult.Subtitle"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPublicGists" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

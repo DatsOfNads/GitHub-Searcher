@@ -1,8 +1,15 @@
 <resources>
     <string name="app_name">GitHub searcher</string>
-    <string name="location">Location: </string>
+    <string name="location">Location: %s</string>
     <string name="alert_dialog_error"> Попробовать ещё раз </string>
     <string name="nothing_was_found_for_your_search">По вашему запросу ничего не найдено</string>
     <string name="something_went_wrong">Что-то пошло не так(</string>
     <string name="please_try_again">Скорее всего, это не наша вина. Попробуйте ещё раз.</string>
+    <string name="id">id: %s</string>
+    <string name="type">type: %s</string>
+    <string name="name">Name: %s</string>
+    <string name="bio">Bio: %s</string>
+    <string name="public_repos">Public repos: %s</string>
+    <string name="public_gists">Public gists: %s</string>
+    <string name="followers">Followers: %s</string>
 </resources>
