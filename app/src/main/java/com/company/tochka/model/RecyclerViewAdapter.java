@@ -21,7 +21,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private boolean isLoadingAdded;
 
-    private ArrayList<UserModel> arrayList = new ArrayList<>();
+    private ArrayList<User> arrayList = new ArrayList<>();
 
     private RecyclerViewAdapterCallback mCallback;
 
@@ -63,7 +63,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if(getItemViewType(position) == ITEM){
 
-            UserModel currentUser = arrayList.get(position);
+            User currentUser = arrayList.get(position);
             currentUser.setNumberInList(Integer.toString(position + 1));
 
             if(position == arrayList.size() - 1)
@@ -73,17 +73,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
     
-    public void addAll(ArrayList<UserModel> arrayList){
+    public void addAll(ArrayList<User> arrayList){
 
-        for (UserModel userModel : arrayList) {
-            this.arrayList.add(userModel);
+        for (User user : arrayList) {
+            this.arrayList.add(user);
             notifyItemChanged(arrayList.size() - 1);
         }
     }
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        arrayList.add(new UserModel());
+        arrayList.add(new User());
         notifyItemInserted(arrayList.size() - 1);
     }
 
@@ -94,7 +94,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         isLoadingAdded = false;
 
         int position = arrayList.size() - 1;
-        UserModel user = arrayList.get(position);
+        User user = arrayList.get(position);
 
         if (user != null) {
             arrayList.remove(position);
@@ -132,12 +132,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             this.binding = binding;
         }
 
-        void bind(UserModel userModel){
-            binding.setUser(userModel);
-            binding.view.setOnClickListener(v -> mCallback.openFullUserInformation(userModel.getLogin()));
+        void bind(User user){
+            binding.setUser(user);
+            binding.view.setOnClickListener(v -> mCallback.openFullUserInformation(user.getLogin()));
 
             binding.executePendingBindings();
         }
+    }
+
+    public boolean isLoadingAdded() {
+        return isLoadingAdded;
+    }
+
+    public void setLoadingAdded(boolean isLoadingAdded){
+        this.isLoadingAdded = isLoadingAdded;
+    }
+
+    public ArrayList<User> getArrayList(){
+        return arrayList;
     }
 
     private class LoadingViewHolder extends RecyclerView.ViewHolder{

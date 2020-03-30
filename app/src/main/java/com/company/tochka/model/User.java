@@ -8,7 +8,7 @@ import androidx.databinding.BindingAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.squareup.picasso.Picasso;
 
-public class UserModel {
+public class User {
 
     private String numberInList;
 
@@ -26,7 +26,7 @@ public class UserModel {
     @SerializedName("type")
     private String type;
 
-    UserModel(){
+    User(){
 
     }
 
@@ -44,7 +44,7 @@ public class UserModel {
         return numberInList;
     }
 
-    public void setNumberInList(String numberInList) {
+    void setNumberInList(String numberInList) {
         this.numberInList = numberInList;
     }
 
@@ -52,7 +52,7 @@ public class UserModel {
         return isLastInList;
     }
 
-    public void setLastInList(boolean lastInList) {
+    void setLastInList(boolean lastInList) {
         isLastInList = lastInList;
     }
 

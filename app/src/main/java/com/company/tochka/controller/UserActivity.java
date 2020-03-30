@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.company.tochka.model.CustomAlertDialog;
-import com.company.tochka.model.FullUserModel;
+import com.company.tochka.model.FullUser;
 import com.company.tochka.R;
 import com.company.tochka.model.RetrofitClientInstance;
 import com.company.tochka.databinding.ActivityUserBinding;
@@ -57,16 +57,16 @@ public class UserActivity extends AppCompatActivity {
     @EverythingIsNonNull
     private void loadUserInfo(String login){
 
-        Call<FullUserModel> call = service.getAllUsers(login);
+        Call<FullUser> call = service.getAllUsers(login);
 
-        call.enqueue(new Callback<FullUserModel>() {
+        call.enqueue(new Callback<FullUser>() {
             @Override
-            public void onResponse(Call<FullUserModel> call, Response<FullUserModel> response) {
+            public void onResponse(Call<FullUser> call, Response<FullUser> response) {
                 setView(response.body());
             }
 
             @Override
-            public void onFailure(Call<FullUserModel> call, Throwable t) {
+            public void onFailure(Call<FullUser> call, Throwable t) {
 
                 final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(UserActivity.this,
                         R.string.alert_dialog_error);
@@ -89,7 +89,7 @@ public class UserActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setView(FullUserModel user){
+    private void setView(FullUser user){
 
         binding.setUser(user);
     }
@@ -97,6 +97,6 @@ public class UserActivity extends AppCompatActivity {
     private interface GetDataService {
 
         @GET("/users/{login}")
-        Call<FullUserModel> getAllUsers(@Path("login") String login);
+        Call<FullUser> getAllUsers(@Path("login") String login);
     }
 }

@@ -7,7 +7,7 @@ import androidx.databinding.BindingAdapter;
 import com.google.gson.annotations.SerializedName;
 import com.squareup.picasso.Picasso;
 
-public class FullUserModel {
+public class FullUser {
 
     @SerializedName("login")
     private String login;
