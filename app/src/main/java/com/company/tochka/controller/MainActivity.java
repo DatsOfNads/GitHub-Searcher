@@ -112,6 +112,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             adapter.setLoadingAdded(isLoadedAdded);
             adapter.addAll(arrayList);
 
+            if(arrayList.size() == 0){
+
+                if (isSearch)
+                    search();
+                else
+                    loadFirstPage();
+            }
+
         } else {
             loadFirstPage();
         }
@@ -195,6 +203,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                 currentPageNumber = 1;
 
+                isSearch = true;
+
                 search();
 
                 return false;
@@ -249,12 +259,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                     adapter.addLoadingFooter();
                     setCurrentUserId(arrayList);
-
                 }
             }
 
             @Override
             public void onFailure(Call<ArrayList<User>> call, Throwable t) {
+                isLoading = false;
 
                 showAlertDialog(v -> {
                     loadFirstPage();
@@ -291,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
             @Override
             public void onFailure(Call<ArrayList<User>> call, Throwable t) {
+                isLoading = false;
 
                 showAlertDialog(v -> {
                     loadNextPage();
@@ -317,8 +328,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                     progressBar.setVisibility(View.INVISIBLE);
 
-                    isSearch = true;
-
                     currentTotalCount = response.body().getTotalCount();
 
                     if (currentTotalCount == 0) {
@@ -335,11 +344,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                     } else {
                         isLastPage = true;
                     }
-                }
+                } else
+                    isSearch = false;
             }
 
             @Override
             public void onFailure(Call<ItemsList> call, Throwable t) {
+                isLoading = false;
 
                 showAlertDialog(v -> {
                     search();
@@ -385,6 +396,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
             @Override
             public void onFailure(Call<ItemsList> call, Throwable t) {
+                isLoading = false;
 
                 showAlertDialog(v -> {
                     searchNextPage();
