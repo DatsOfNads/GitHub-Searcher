@@ -152,7 +152,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return arrayList;
     }
 
-    private class LoadingViewHolder extends RecyclerView.ViewHolder{
+    private static class LoadingViewHolder extends RecyclerView.ViewHolder{
 
         LoadingViewHolder(@NonNull View itemView) {
             super(itemView);

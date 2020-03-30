@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     private RecyclerViewAdapter adapter;
     private LinearLayoutManager linearLayoutManager;
     private ProgressBar progressBar;
+    private CustomAlertDialog customAlertDialogInfo;
 
     GetDataService service;
 
@@ -121,10 +122,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                 isLoading = true;
 
-                if (!isSearch)
-                    loadNextPage();
-                else
+                if (isSearch)
                     searchNextPage();
+                else
+                    loadNextPage();
             }
 
             @Override
@@ -211,6 +212,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     @Override
     protected void onPause() {
 
+        if(customAlertDialogInfo != null)
+            customAlertDialogInfo.dismiss();
+
         RecyclerViewStatus status = new RecyclerViewStatus(isLoading,
                 isLastPage,
                 isSearch,currentUserId,
@@ -252,17 +256,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             @Override
             public void onFailure(Call<ArrayList<User>> call, Throwable t) {
 
-                final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
-                        R.string.alert_dialog_error);
-
-                customAlertDialogInfo.setTitle(R.string.something_went_wrong);
-                customAlertDialogInfo.setMessage(R.string.please_try_again);
-                customAlertDialogInfo.show();
-
-                customAlertDialogInfo.setButtonClickListener(v -> {
-
+                showAlertDialog(v -> {
                     loadFirstPage();
-                    customAlertDialogInfo.dismiss();
+                    customAlertDialogInfo.hide();
                 });
             }
         });
@@ -296,17 +292,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             @Override
             public void onFailure(Call<ArrayList<User>> call, Throwable t) {
 
-                final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
-                        R.string.alert_dialog_error);
-
-                customAlertDialogInfo.setTitle(R.string.something_went_wrong);
-                customAlertDialogInfo.setMessage(R.string.please_try_again);
-                customAlertDialogInfo.show();
-
-                customAlertDialogInfo.setButtonClickListener(v -> {
-
+                showAlertDialog(v -> {
                     loadNextPage();
-                    customAlertDialogInfo.dismiss();
+                    customAlertDialogInfo.hide();
                 });
             }
         });
@@ -353,17 +341,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             @Override
             public void onFailure(Call<ItemsList> call, Throwable t) {
 
-                final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
-                        R.string.alert_dialog_error);
-
-                customAlertDialogInfo.setTitle(R.string.something_went_wrong);
-                customAlertDialogInfo.setMessage(R.string.please_try_again);
-                customAlertDialogInfo.show();
-
-                customAlertDialogInfo.setButtonClickListener(v -> {
-
+                showAlertDialog(v -> {
                     search();
-                    customAlertDialogInfo.dismiss();
+                    customAlertDialogInfo.hide();
                 });
             }
         });
@@ -405,20 +385,26 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
             @Override
             public void onFailure(Call<ItemsList> call, Throwable t) {
-                final CustomAlertDialog customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
-                        R.string.alert_dialog_error);
 
-                customAlertDialogInfo.setTitle(R.string.something_went_wrong);
-                customAlertDialogInfo.setMessage(R.string.please_try_again);
-                customAlertDialogInfo.show();
-
-                customAlertDialogInfo.setButtonClickListener(v -> {
-
+                showAlertDialog(v -> {
                     searchNextPage();
-                    customAlertDialogInfo.dismiss();
+                    customAlertDialogInfo.hide();
                 });
             }
         });
+    }
+
+    private void showAlertDialog(View.OnClickListener onClickListener){
+
+        if (customAlertDialogInfo == null)
+            customAlertDialogInfo = new CustomAlertDialog(MainActivity.this,
+                    R.string.alert_dialog_error);
+
+        customAlertDialogInfo.setTitle(R.string.something_went_wrong);
+        customAlertDialogInfo.setMessage(R.string.please_try_again);
+        customAlertDialogInfo.show();
+
+        customAlertDialogInfo.setButtonClickListener(onClickListener);
     }
 
     private void setCurrentUserId(ArrayList<User> arrayList) {
