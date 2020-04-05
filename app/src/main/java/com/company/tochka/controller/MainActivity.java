@@ -25,21 +25,13 @@ import com.company.tochka.model.MyViewModel;
 import com.company.tochka.model.PaginationScrollListener;
 import com.company.tochka.R;
 import com.company.tochka.model.RecyclerViewAdapter;
-import com.company.tochka.model.RecyclerViewStatus;
-import com.company.tochka.model.RetrofitClientInstance;
-import com.company.tochka.model.User;
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
-import retrofit2.internal.EverythingIsNonNull;
+import static com.company.tochka.model.Exceptions.LOAD_FIRST_PAGE_EXCEPTION;
+import static com.company.tochka.model.Exceptions.LOAD_NEXT_PAGE_EXCEPTION;
+import static com.company.tochka.model.Exceptions.SEARCH_EXCEPTION;
+import static com.company.tochka.model.Exceptions.SEARCH_NEXT_PAGE_EXCEPTION;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.RecyclerViewAdapterCallback {
 
@@ -48,29 +40,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     private ProgressBar progressBar;
     private CustomAlertDialog customAlertDialogInfo;
 
-    GetDataService service;
-
     MyViewModel model;
 
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private boolean isSearch = false;
 
-    private String currentUserId;
-
-    private String currentUserName;
-
-    private int currentPageNumber, currentCount, currentTotalCount;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
-
-        model = new ViewModelProvider(this).get(MyViewModel.class);
 
         adapter = new RecyclerViewAdapter(this);
 
@@ -88,52 +67,80 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        RecyclerViewStatus recyclerViewStatus = model.getCurrentStatus();
+        model = new ViewModelProvider(this).get(MyViewModel.class);
 
-        if(recyclerViewStatus != null){
+        model.subscribeCurrentArrayList().observe(this, users -> {
             progressBar.setVisibility(View.INVISIBLE);
 
-            isLoading = recyclerViewStatus.isLoading();
-            isLastPage = recyclerViewStatus.isLastPage();
-            isSearch = recyclerViewStatus.isSearch();
+            adapter.removeAll();
 
-            currentUserId = recyclerViewStatus.getCurrentUserId();
-
-            currentUserName = recyclerViewStatus.getCurrentUserName();
-
-            currentPageNumber = recyclerViewStatus.getCurrentPageNumber();
-            currentCount = recyclerViewStatus.getCurrentCount();
-            currentTotalCount = recyclerViewStatus.getCurrentTotalCount();
-
-            ArrayList<User> arrayList = recyclerViewStatus.getArrayList();
-
-            boolean isLoadedAdded = recyclerViewStatus.isLoadingAdded();
-
-            adapter.setLoadingAdded(isLoadedAdded);
-            adapter.addAll(arrayList);
-
-            if(arrayList.size() == 0){
-
-                if (isSearch)
-                    search();
-                else
-                    loadFirstPage();
+            if(users.size() == 0){
+                Toast.makeText(this, R.string.nothing_was_found_for_your_search, Toast.LENGTH_SHORT).show();
+                return;
             }
 
-        } else {
-            loadFirstPage();
-        }
+            adapter.addAll(users);
+
+            if (!isLastPage){
+                adapter.addLoadingFooter();
+            }
+        });
+
+        model.subscribeCurrentRecyclerStatus().observe(this, newRecyclerViewStatus -> {
+            isLoading = newRecyclerViewStatus.isLoading();
+            isLastPage = newRecyclerViewStatus.isLastPage();
+            isSearch = newRecyclerViewStatus.isSearch();
+        });
+
+        model.subscribeOnExceptions().observe(this, exception -> {
+            switch (exception){
+
+                case LOAD_FIRST_PAGE_EXCEPTION:
+                    showAlertDialog(v -> {
+                        model.loadFirstPageAfterException();
+                        customAlertDialogInfo.hide();
+                    });
+
+                    break;
+
+                case LOAD_NEXT_PAGE_EXCEPTION:
+                    showAlertDialog(v -> {
+                        model.loadNextPageAfterException();
+                        customAlertDialogInfo.hide();
+                    });
+
+                    break;
+
+                case SEARCH_EXCEPTION:
+                    showAlertDialog(v -> {
+                        model.searchAfterException();
+                        customAlertDialogInfo.hide();
+                    });
+
+                    break;
+
+                case SEARCH_NEXT_PAGE_EXCEPTION:
+                    showAlertDialog(v -> {
+                        model.searchNextPageAfterException();
+                        customAlertDialogInfo.hide();
+                    });
+
+                    break;
+            }
+        });
+
+        model.getData();
 
         recyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
             protected void loadMoreItems() {
 
-                isLoading = true;
+                model.setIsLoading(true);
 
                 if (isSearch)
-                    searchNextPage();
+                    model.searchNextPage();
                 else
-                    loadNextPage();
+                    model.loadNextPage();
             }
 
             @Override
@@ -161,11 +168,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
         searchView.setSearchableInfo(Objects.requireNonNull(searchManager).getSearchableInfo(getComponentName()));
 
-        RecyclerViewStatus recyclerViewStatus = model.getCurrentStatus();
-
         if(isSearch){
             searchView.onActionViewExpanded();
-            searchView.setQuery(recyclerViewStatus.getCurrentUserName(), true);
+            searchView.setQuery(model.getCurrentUserName(), true);
             searchView.clearFocus();
         }
 
@@ -177,10 +182,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                 progressBar.setVisibility(View.VISIBLE);
 
-                isSearch = false;
-                isLastPage = false;
                 adapter.removeAll();
-                loadFirstPage();
+                model.loadFirstPage();
             }
 
             searchView.setQuery("", false);
@@ -197,15 +200,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
                 adapter.removeAll();
 
-                isLastPage = false;
-
-                currentUserName = query;
-
-                currentPageNumber = 1;
-
-                isSearch = true;
-
-                search();
+                model.search(query);
 
                 return false;
             }
@@ -225,185 +220,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         if(customAlertDialogInfo != null)
             customAlertDialogInfo.dismiss();
 
-        RecyclerViewStatus status = new RecyclerViewStatus(isLoading,
-                isLastPage,
-                isSearch,currentUserId,
-                currentUserName,
-                currentPageNumber,
-                currentCount,
-                currentTotalCount,
-                adapter.getArrayList(),
-                adapter.isLoadingAdded());
-
-        model.setCurrentStatus(status);
         super.onPause();
-    }
-
-    @EverythingIsNonNull
-    private void loadFirstPage() {
-
-        currentUserId = "0";
-
-        Call<ArrayList<User>> call = service.getAllUsers(currentUserId);
-
-        call.enqueue(new Callback<ArrayList<User>>() {
-            @Override
-            public void onResponse(Call<ArrayList<User>> call, Response<ArrayList<User>> response) {
-                progressBar.setVisibility(View.INVISIBLE);
-
-                ArrayList<User> arrayList = response.body();
-
-                if (arrayList != null) {
-
-                    adapter.addAll(arrayList);
-
-                    adapter.addLoadingFooter();
-                    setCurrentUserId(arrayList);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<User>> call, Throwable t) {
-                isLoading = false;
-
-                showAlertDialog(v -> {
-                    loadFirstPage();
-                    customAlertDialogInfo.hide();
-                });
-            }
-        });
-    }
-
-    @EverythingIsNonNull
-    private void loadNextPage() {
-
-        Call<ArrayList<User>> call = service.getAllUsers(currentUserId);
-
-        call.enqueue(new Callback<ArrayList<User>>() {
-            @Override
-            public void onResponse(Call<ArrayList<User>> call, Response<ArrayList<User>> response) {
-
-                ArrayList<User> arrayList = response.body();
-
-                if (arrayList != null) {
-
-                    adapter.removeLoadingFooter();
-                    adapter.addAll(arrayList);
-
-                    isLoading = false;
-
-                    setCurrentUserId(arrayList);
-
-                    adapter.addLoadingFooter();
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ArrayList<User>> call, Throwable t) {
-                isLoading = false;
-
-                showAlertDialog(v -> {
-                    loadNextPage();
-                    customAlertDialogInfo.hide();
-                });
-            }
-        });
-    }
-
-    @EverythingIsNonNull
-    private void search() {
-
-        Call<ItemsList> call = service.getUsersWithPageParam(currentUserName, currentPageNumber);
-
-        call.enqueue(new Callback<ItemsList>() {
-            @Override
-            public void onResponse(Call<ItemsList> call, Response<ItemsList> response) {
-
-                ArrayList<User> arrayList;
-
-                if (response.body() != null) {
-
-                    arrayList = response.body().getItems();
-
-                    progressBar.setVisibility(View.INVISIBLE);
-
-                    currentTotalCount = response.body().getTotalCount();
-
-                    if (currentTotalCount == 0) {
-                        Toast.makeText(MainActivity.this, R.string.nothing_was_found_for_your_search, Toast.LENGTH_SHORT).show();
-                    }
-
-                    currentCount = arrayList.size();
-
-                    adapter.addAll(arrayList);
-
-                    if (currentCount < currentTotalCount) {
-                        currentPageNumber++;
-                        adapter.addLoadingFooter();
-                    } else {
-                        isLastPage = true;
-                    }
-                } else
-                    isSearch = false;
-            }
-
-            @Override
-            public void onFailure(Call<ItemsList> call, Throwable t) {
-                isLoading = false;
-
-                showAlertDialog(v -> {
-                    search();
-                    customAlertDialogInfo.hide();
-                });
-            }
-        });
-    }
-
-    @EverythingIsNonNull
-    private void searchNextPage() {
-
-        Call<ItemsList> call = service.getUsersWithPageParam(currentUserName, currentPageNumber);
-
-        call.enqueue(new Callback<ItemsList>() {
-            @Override
-            public void onResponse(Call<ItemsList> call, Response<ItemsList> response) {
-
-                ArrayList<User> arrayList;
-
-                if (response.body() != null) {
-
-                    adapter.removeLoadingFooter();
-
-                    arrayList = response.body().getItems();
-
-                    currentCount += arrayList.size();
-
-                    isLoading = false;
-
-                    adapter.addAll(arrayList);
-
-                    if (currentCount < currentTotalCount) {
-                        currentPageNumber++;
-                        adapter.addLoadingFooter();
-                    } else {
-                        adapter.removeLoadingFooter();
-                        isLastPage = true;
-
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ItemsList> call, Throwable t) {
-                isLoading = false;
-
-                showAlertDialog(v -> {
-                    searchNextPage();
-                    customAlertDialogInfo.hide();
-                });
-            }
-        });
     }
 
     private void showAlertDialog(View.OnClickListener onClickListener){
@@ -419,47 +236,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         customAlertDialogInfo.setButtonClickListener(onClickListener);
     }
 
-    private void setCurrentUserId(ArrayList<User> arrayList) {
-        User user = arrayList.get(arrayList.size() - 1);
-        currentUserId = user.getId();
-    }
-
     @Override
     public void openFullUserInformation(String login) {
         Intent intent = new Intent(MainActivity.this, UserActivity.class);
         intent.putExtra("extra_login", login);
         startActivity(intent);
-    }
-
-    private interface GetDataService {
-
-        @GET("/users")
-        Call<ArrayList<User>> getAllUsers(@Query("since") String id);
-
-        @GET("search/users")
-        Call<ItemsList> getUsersWithPageParam(@Query("q") String userName, @Query("page") long pageNum);
-    }
-
-    private static class ItemsList {
-
-        @SerializedName("items")
-        @Expose
-        private ArrayList<User> items;
-
-        @SerializedName("total_count")
-        private Integer totalCount;
-
-        public ItemsList(ArrayList<User> items, Integer totalCount) {
-            this.items = items;
-            this.totalCount = totalCount;
-        }
-
-        ArrayList<User> getItems() {
-            return items;
-        }
-
-        Integer getTotalCount() {
-            return totalCount;
-        }
     }
 }
