@@ -1,4 +1,4 @@
-package com.company.tochka.model;
+package com.company.tochka.view;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.tochka.R;
 import com.company.tochka.databinding.FragmentUserBinding;
+import com.company.tochka.model.User;
 
 import java.util.ArrayList;
 
@@ -25,7 +26,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private RecyclerViewAdapterCallback mCallback;
 
-    public RecyclerViewAdapter(Context context){
+    RecyclerViewAdapter(Context context){
         this.mCallback = (RecyclerViewAdapterCallback) context;
     }
 
@@ -73,7 +74,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
     
-    public void addAll(ArrayList<User> arrayList){
+    void addAll(ArrayList<User> arrayList){
 
         for (User user : arrayList) {
             this.arrayList.add(user);
@@ -81,13 +82,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public void addLoadingFooter() {
+    void addLoadingFooter() {
         isLoadingAdded = true;
         arrayList.add(new User());
         notifyItemInserted(arrayList.size() - 1);
     }
 
-    public void removeLoadingFooter() {
+    private void removeLoadingFooter() {
         if(!isLoadingAdded)
             return;
 
@@ -102,7 +103,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public void removeAll(){
+    void removeAll(){
         removeLoadingFooter();
         arrayList.clear();
         notifyDataSetChanged();
@@ -138,18 +139,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
             binding.executePendingBindings();
         }
-    }
-
-    public boolean isLoadingAdded() {
-        return isLoadingAdded;
-    }
-
-    public void setLoadingAdded(boolean isLoadingAdded){
-        this.isLoadingAdded = isLoadingAdded;
-    }
-
-    public ArrayList<User> getArrayList(){
-        return arrayList;
     }
 
     private static class LoadingViewHolder extends RecyclerView.ViewHolder{

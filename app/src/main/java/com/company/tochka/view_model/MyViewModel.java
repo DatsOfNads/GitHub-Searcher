@@ -1,8 +1,11 @@
-package com.company.tochka.model;
+package com.company.tochka.view_model;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.company.tochka.model.RecyclerViewStatus;
+import com.company.tochka.model.RetrofitClientInstance;
+import com.company.tochka.model.User;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

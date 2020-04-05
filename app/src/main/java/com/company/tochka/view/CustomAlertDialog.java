@@ -1,4 +1,4 @@
-package com.company.tochka.model;
+package com.company.tochka.view;
 
 
 import android.annotation.SuppressLint;
@@ -15,7 +15,7 @@ public class CustomAlertDialog extends AlertDialog {
 
     private Context context;
 
-    public CustomAlertDialog(Context context, int buttonTitle) {
+    CustomAlertDialog(Context context, int buttonTitle) {
         super(context);
 
         this.context = context;
@@ -34,11 +34,11 @@ public class CustomAlertDialog extends AlertDialog {
         super.setTitle(context.getResources().getString(id));
     }
 
-    public void setMessage(int id){
+    void setMessage(int id){
         super.setMessage(context.getResources().getString(id));
     }
 
-    public void setButtonClickListener(View.OnClickListener onClickListener){
+    void setButtonClickListener(View.OnClickListener onClickListener){
         button.setOnClickListener(onClickListener);
     }
 }

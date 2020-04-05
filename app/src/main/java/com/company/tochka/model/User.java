@@ -26,7 +26,7 @@ public class User {
     @SerializedName("type")
     private String type;
 
-    User(){
+    public User(){
 
     }
 
@@ -44,7 +44,7 @@ public class User {
         return numberInList;
     }
 
-    void setNumberInList(String numberInList) {
+    public void setNumberInList(String numberInList) {
         this.numberInList = numberInList;
     }
 
@@ -52,7 +52,7 @@ public class User {
         return isLastInList;
     }
 
-    void setLastInList(boolean lastInList) {
+    public void setLastInList(boolean lastInList) {
         isLastInList = lastInList;
     }
 

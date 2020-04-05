@@ -1,4 +1,4 @@
-package com.company.tochka.controller;
+package com.company.tochka.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -20,11 +20,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.company.tochka.model.CustomAlertDialog;
-import com.company.tochka.model.MyViewModel;
-import com.company.tochka.model.PaginationScrollListener;
+import com.company.tochka.view_model.MyViewModel;
 import com.company.tochka.R;
-import com.company.tochka.model.RecyclerViewAdapter;
 
 import java.util.Objects;
 

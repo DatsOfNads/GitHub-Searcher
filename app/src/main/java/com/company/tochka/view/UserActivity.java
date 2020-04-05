@@ -1,4 +1,4 @@
-package com.company.tochka.controller;
+package com.company.tochka.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.company.tochka.model.CustomAlertDialog;
 import com.company.tochka.model.FullUser;
 import com.company.tochka.R;
 import com.company.tochka.model.RetrofitClientInstance;

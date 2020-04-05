@@ -10,7 +10,7 @@ public class RecyclerViewStatus {
         return isLoading;
     }
 
-    void setLoading(boolean loading) {
+    public void setLoading(boolean loading) {
         isLoading = loading;
     }
 
@@ -18,7 +18,7 @@ public class RecyclerViewStatus {
         return isLastPage;
     }
 
-    void setLastPage(boolean lastPage) {
+    public void setLastPage(boolean lastPage) {
         isLastPage = lastPage;
     }
 
