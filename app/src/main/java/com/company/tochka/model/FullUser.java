@@ -1,13 +1,11 @@
 package com.company.tochka.model;
 
-import android.widget.ImageView;
-
-import androidx.databinding.BindingAdapter;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
-import com.squareup.picasso.Picasso;
 
-public class FullUser {
+public class FullUser implements Parcelable {
 
     @SerializedName("login")
     private String login;
@@ -39,10 +37,30 @@ public class FullUser {
     @SerializedName("bio")
     private String bio;
 
-    @BindingAdapter({"android:src"})
-    public static void loadImage(ImageView view, String url) {
-        Picasso.get().load(url).into(view);
+    public FullUser(Parcel in) {
+        login = in.readString();
+        avatarURL = in.readString();
+        name = in.readString();
+        company = in.readString();
+        blog = in.readString();
+        location = in.readString();
+        publicRepos = in.readString();
+        publicGists = in.readString();
+        followers = in.readString();
+        bio = in.readString();
     }
+
+    public static final Creator<FullUser> CREATOR = new Creator<FullUser>() {
+        @Override
+        public FullUser createFromParcel(Parcel in) {
+            return new FullUser(in);
+        }
+
+        @Override
+        public FullUser[] newArray(int size) {
+            return new FullUser[size];
+        }
+    };
 
     public String getLogin() {
         return login;
@@ -122,5 +140,24 @@ public class FullUser {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(login);
+        dest.writeString(avatarURL);
+        dest.writeString(name);
+        dest.writeString(company);
+        dest.writeString(blog);
+        dest.writeString(location);
+        dest.writeString(publicRepos);
+        dest.writeString(publicGists);
+        dest.writeString(followers);
+        dest.writeString(bio);
     }
 }

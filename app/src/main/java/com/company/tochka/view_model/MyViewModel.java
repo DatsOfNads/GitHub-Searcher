@@ -3,6 +3,7 @@ package com.company.tochka.view_model;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.company.tochka.model.FullUser;
 import com.company.tochka.model.RecyclerViewStatus;
 import com.company.tochka.model.RetrofitClientInstance;
 import com.company.tochka.model.User;
@@ -16,12 +17,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.internal.EverythingIsNonNull;
 
 import static com.company.tochka.model.Exceptions.LOAD_FIRST_PAGE_EXCEPTION;
 import static com.company.tochka.model.Exceptions.LOAD_NEXT_PAGE_EXCEPTION;
 import static com.company.tochka.model.Exceptions.NO_EXCEPTIONS;
+import static com.company.tochka.model.Exceptions.OPEN_FULL_USER_INFORMATION_EXCEPTION;
 import static com.company.tochka.model.Exceptions.SEARCH_EXCEPTION;
 import static com.company.tochka.model.Exceptions.SEARCH_NEXT_PAGE_EXCEPTION;
 
@@ -30,12 +33,16 @@ public class MyViewModel extends ViewModel {
     private String currentUserId;
 
     private String currentUserName;
+
+    private String currentFullUserLogin;
+
     private int currentPageNumber, currentCount, currentTotalCount;
 
     private GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
 
     private MutableLiveData<ArrayList<User>> currentArrayList = new MutableLiveData<>();
     private MutableLiveData<RecyclerViewStatus> recyclerStatus = new MutableLiveData<>();
+    private MutableLiveData<FullUser> fullUser = new MutableLiveData<>();
     private MutableLiveData<Integer> exceptions = new MutableLiveData<>();
 
     public MutableLiveData<ArrayList<User>> subscribeCurrentArrayList(){
@@ -44,6 +51,10 @@ public class MyViewModel extends ViewModel {
 
     public MutableLiveData<RecyclerViewStatus> subscribeCurrentRecyclerStatus(){
         return recyclerStatus;
+    }
+
+    public MutableLiveData<FullUser> subscribeFullUser(){
+        return fullUser;
     }
 
     public MutableLiveData<Integer> subscribeOnExceptions(){
@@ -68,6 +79,9 @@ public class MyViewModel extends ViewModel {
                     setIsLastPage(false);
                     setCurrentUserId(arrayList);
                     currentArrayList.postValue(arrayList);
+                } else {
+                    setIsLoading(false);
+                    exceptions.setValue(LOAD_FIRST_PAGE_EXCEPTION);
                 }
             }
 
@@ -102,6 +116,9 @@ public class MyViewModel extends ViewModel {
                     setIsLoading(false);
 
                     setCurrentUserId(arrayList);
+                } else {
+                    setIsLoading(false);
+                    exceptions.setValue(LOAD_NEXT_PAGE_EXCEPTION);
                 }
             }
 
@@ -151,6 +168,9 @@ public class MyViewModel extends ViewModel {
                     } else {
                         setIsLastPage(true);
                     }
+                } else {
+                    setIsLoading(false);
+                    exceptions.setValue(SEARCH_EXCEPTION);
                 }
             }
 
@@ -194,6 +214,9 @@ public class MyViewModel extends ViewModel {
                         setIsLastPage(true);
 
                     }
+                } else {
+                    setIsLoading(false);
+                    exceptions.setValue(SEARCH_NEXT_PAGE_EXCEPTION);
                 }
             }
 
@@ -208,6 +231,35 @@ public class MyViewModel extends ViewModel {
     public void searchNextPageAfterException(){
         exceptions.setValue(NO_EXCEPTIONS);
         searchNextPage();
+    }
+
+    @EverythingIsNonNull
+    public void searchFullUserInformation(String login){
+
+        currentFullUserLogin = login;
+
+        Call<FullUser> call = service.getFullUserInformation(login);
+
+        call.enqueue(new Callback<FullUser>() {
+            @Override
+            public void onResponse(Call<FullUser> call, Response<FullUser> response) {
+
+                if(response.body() != null)
+                    fullUser.setValue(response.body());
+                else
+                    exceptions.setValue(OPEN_FULL_USER_INFORMATION_EXCEPTION);
+            }
+
+            @Override
+            public void onFailure(Call<FullUser> call, Throwable t) {
+                exceptions.setValue(OPEN_FULL_USER_INFORMATION_EXCEPTION);
+            }
+        });
+    }
+
+    public void searchFullUserInformationAfterException(){
+        exceptions.setValue(NO_EXCEPTIONS);
+        searchFullUserInformation(currentFullUserLogin);
     }
 
     private void setCurrentUserId(ArrayList<User> arrayList) {
@@ -269,6 +321,9 @@ public class MyViewModel extends ViewModel {
 
         @GET("search/users")
         Call<ItemsList> getUsersWithPageParam(@Query("q") String userName, @Query("page") long pageNum);
+
+        @GET("/users/{login}")
+        Call<FullUser> getFullUserInformation(@Path("login") String login);
     }
 
     private static class ItemsList {

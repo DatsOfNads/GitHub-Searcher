@@ -4,9 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.company.tochka.R;
@@ -135,7 +138,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         void bind(User user){
             binding.setUser(user);
-            binding.view.setOnClickListener(v -> mCallback.openFullUserInformation(user.getLogin()));
+
+            ViewCompat.setTransitionName(binding.imageView, user.getLogin() + "_imageView");
+            ViewCompat.setTransitionName(binding.textViewLogin, user.getLogin() + "_textView");
+
+            binding.view.setOnClickListener(v -> {
+                binding.progress.setVisibility(View.INVISIBLE);
+
+                ImageView imageView = binding.imageView;
+                TextView textView = binding.textViewLogin;
+
+                mCallback.openFullUserInformation(user.getLogin(), imageView,textView);
+            });
 
             binding.executePendingBindings();
         }
@@ -149,6 +163,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public interface RecyclerViewAdapterCallback {
-        void openFullUserInformation(String login);
+        void openFullUserInformation(String userLogin, ImageView sharedImageView, TextView sharedTextView);
     }
 }

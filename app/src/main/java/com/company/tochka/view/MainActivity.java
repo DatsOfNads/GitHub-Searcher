@@ -3,30 +3,37 @@ package com.company.tochka.view;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.ViewCompat;
+import androidx.databinding.BindingAdapter;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityOptions;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.company.tochka.view_model.MyViewModel;
 import com.company.tochka.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
 import static com.company.tochka.model.Exceptions.LOAD_FIRST_PAGE_EXCEPTION;
 import static com.company.tochka.model.Exceptions.LOAD_NEXT_PAGE_EXCEPTION;
+import static com.company.tochka.model.Exceptions.OPEN_FULL_USER_INFORMATION_EXCEPTION;
 import static com.company.tochka.model.Exceptions.SEARCH_EXCEPTION;
 import static com.company.tochka.model.Exceptions.SEARCH_NEXT_PAGE_EXCEPTION;
 
@@ -42,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private boolean isSearch = false;
+
+    private ImageView sharedImageView;
+    private TextView sharedTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +99,30 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             isSearch = newRecyclerViewStatus.isSearch();
         });
 
+        model.subscribeFullUser().observe(this, fullUser -> {
+
+            if (sharedTextView == null || sharedImageView == null) {
+                return;
+            }
+
+            Intent  fullUserIntent = new Intent(this, UserActivity.class);
+
+            fullUserIntent.putExtra("user", fullUser);
+            fullUserIntent.putExtra("sharedImageView", ViewCompat.getTransitionName(sharedImageView));
+            fullUserIntent.putExtra("sharedTextView", ViewCompat.getTransitionName(sharedTextView));
+
+            Pair<View,String> imageViewPair = new Pair<>(sharedImageView,ViewCompat.getTransitionName(sharedImageView));
+            Pair<View,String> textViewPair = new Pair<>(sharedTextView,ViewCompat.getTransitionName(sharedTextView));
+
+            ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,
+                    imageViewPair,
+                    textViewPair);
+
+            progressBar.setVisibility(View.INVISIBLE);
+
+            startActivity(fullUserIntent, options.toBundle());
+        });
+
         model.subscribeOnExceptions().observe(this, exception -> {
             switch (exception){
 
@@ -119,6 +153,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 case SEARCH_NEXT_PAGE_EXCEPTION:
                     showAlertDialog(v -> {
                         model.searchNextPageAfterException();
+                        customAlertDialogInfo.hide();
+                    });
+
+                    break;
+
+                case OPEN_FULL_USER_INFORMATION_EXCEPTION:
+                    showAlertDialog(v -> {
+                        model.searchFullUserInformationAfterException();
                         customAlertDialogInfo.hide();
                     });
 
@@ -234,9 +276,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     }
 
     @Override
-    public void openFullUserInformation(String login) {
-        Intent intent = new Intent(MainActivity.this, UserActivity.class);
-        intent.putExtra("extra_login", login);
-        startActivity(intent);
+    public void openFullUserInformation(String userLogin, ImageView sharedImageView, TextView sharedTextView) {
+        this.sharedImageView = sharedImageView;
+        this.sharedTextView = sharedTextView;
+
+        progressBar.setVisibility(View.VISIBLE);
+        model.searchFullUserInformation(userLogin);
+    }
+
+    @BindingAdapter({"url"})
+    public static void loadImage(ImageView view, String url) {
+        Picasso.get().load(url).into(view);
     }
 }

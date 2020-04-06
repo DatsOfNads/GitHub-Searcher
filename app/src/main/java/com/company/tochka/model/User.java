@@ -1,12 +1,10 @@
 package com.company.tochka.model;
 
 import android.view.View;
-import android.widget.ImageView;
 
 import androidx.databinding.BindingAdapter;
 
 import com.google.gson.annotations.SerializedName;
-import com.squareup.picasso.Picasso;
 
 public class User {
 
@@ -28,11 +26,6 @@ public class User {
 
     public User(){
 
-    }
-
-    @BindingAdapter("android:src")
-    public static void loadImage(ImageView view, String url) {
-        Picasso.get().load(url).into(view);
     }
 
     @BindingAdapter("android:visibility")
