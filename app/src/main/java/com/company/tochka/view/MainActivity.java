@@ -79,14 +79,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         model = new ViewModelProvider(this).get(MyViewModel.class);
 
         model.subscribeCurrentRecyclerStatus().observe(this, newRecyclerViewStatus -> {
-            System.err.println("Получили iaLastPage " + newRecyclerViewStatus.isLastPage());
             isLoading = newRecyclerViewStatus.isLoading();
             isLastPage = newRecyclerViewStatus.isLastPage();
             isSearch = newRecyclerViewStatus.isSearch();
         });
 
         model.subscribeCurrentArrayList().observe(this, users -> {
-            System.err.println("Получили лист");
             progressBar.setVisibility(View.INVISIBLE);
 
             adapter.removeAll();
@@ -99,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
             adapter.addAll(users);
 
             if (!isLastPage){
-                System.err.println("ставим штуковину вниз");
                 adapter.addLoadingFooter();
             }
         });
