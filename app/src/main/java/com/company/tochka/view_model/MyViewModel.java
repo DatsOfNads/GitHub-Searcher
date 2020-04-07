@@ -160,14 +160,14 @@ public class MyViewModel extends ViewModel {
 
                     currentCount = arrayList.size();
 
-                    currentArrayList.postValue(arrayList);
-
                     if (currentCount < currentTotalCount) {
                         currentPageNumber++;
                         setIsLastPage(false);
                     } else {
                         setIsLastPage(true);
                     }
+
+                    currentArrayList.postValue(arrayList);
                 } else {
                     setIsLoading(false);
                     exceptions.setValue(SEARCH_EXCEPTION);
@@ -206,14 +206,14 @@ public class MyViewModel extends ViewModel {
 
                     setIsLoading(false);
 
-                    updateArrayList(arrayList);
-
                     if (currentCount < currentTotalCount) {
                         currentPageNumber++;
                     } else {
                         setIsLastPage(true);
 
                     }
+
+                    updateArrayList(arrayList);
                 } else {
                     setIsLoading(false);
                     exceptions.setValue(SEARCH_NEXT_PAGE_EXCEPTION);
