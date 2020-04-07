@@ -3,6 +3,7 @@ package com.company.tochka.view;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.core.view.ViewCompat;
 import androidx.databinding.BindingAdapter;
 import androidx.lifecycle.ViewModelProvider;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     private boolean isSearch = false;
 
     private ImageView sharedImageView;
+    private CardView sharedCardView;
     private TextView sharedTextView;
 
     @Override
@@ -109,13 +111,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
             fullUserIntent.putExtra("user", fullUser);
             fullUserIntent.putExtra("sharedImageView", ViewCompat.getTransitionName(sharedImageView));
+            fullUserIntent.putExtra("sharedCardView", ViewCompat.getTransitionName(sharedCardView));
             fullUserIntent.putExtra("sharedTextView", ViewCompat.getTransitionName(sharedTextView));
 
             Pair<View,String> imageViewPair = new Pair<>(sharedImageView,ViewCompat.getTransitionName(sharedImageView));
+            Pair<View,String> cardViewPair = new Pair<>(sharedCardView,ViewCompat.getTransitionName(sharedCardView));
             Pair<View,String> textViewPair = new Pair<>(sharedTextView,ViewCompat.getTransitionName(sharedTextView));
 
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this,
                     imageViewPair,
+                    cardViewPair,
                     textViewPair);
 
             progressBar.setVisibility(View.INVISIBLE);
@@ -276,8 +281,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     }
 
     @Override
-    public void openFullUserInformation(String userLogin, ImageView sharedImageView, TextView sharedTextView) {
+    public void openFullUserInformation(String userLogin, ImageView sharedImageView, CardView sharedCardView, TextView sharedTextView) {
         this.sharedImageView = sharedImageView;
+        this.sharedCardView = sharedCardView;
         this.sharedTextView = sharedTextView;
 
         progressBar.setVisibility(View.VISIBLE);

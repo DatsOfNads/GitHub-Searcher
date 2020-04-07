@@ -29,6 +29,9 @@ public class UserActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
 
+        String cardViewTransitionName = Objects.requireNonNull(extras).getString("sharedCardView");
+        binding.card.setTransitionName(cardViewTransitionName);
+
         String imageTransitionName = Objects.requireNonNull(extras).getString("sharedImageView");
         binding.imageView.setTransitionName(imageTransitionName);
 

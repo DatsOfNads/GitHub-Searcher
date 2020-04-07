@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -140,15 +141,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             binding.setUser(user);
 
             ViewCompat.setTransitionName(binding.imageView, user.getLogin() + "_imageView");
+            ViewCompat.setTransitionName(binding.card, user.getLogin() + "_cardView");
             ViewCompat.setTransitionName(binding.textViewLogin, user.getLogin() + "_textView");
 
             binding.view.setOnClickListener(v -> {
                 binding.progress.setVisibility(View.INVISIBLE);
 
                 ImageView imageView = binding.imageView;
+                CardView cardView = binding.card;
                 TextView textView = binding.textViewLogin;
 
-                mCallback.openFullUserInformation(user.getLogin(), imageView,textView);
+                mCallback.openFullUserInformation(user.getLogin(), imageView, cardView, textView);
             });
 
             binding.executePendingBindings();
@@ -163,6 +166,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public interface RecyclerViewAdapterCallback {
-        void openFullUserInformation(String userLogin, ImageView sharedImageView, TextView sharedTextView);
+        void openFullUserInformation(String userLogin, ImageView sharedImageView, CardView sharedCardView, TextView sharedTextView);
     }
 }
